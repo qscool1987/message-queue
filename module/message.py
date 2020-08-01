@@ -29,10 +29,10 @@ class Message():
 		self.subscriptionTime = subscriptionTime
 
 	def droupout(self):
+		if self.subscriptionTime <= 0:
+			return True
 		currTime = int(time.time())
 		if currTime >= self.expireTime:
-			return True
-		if self.subscriptionTime <= 0:
 			return True
 		return False
 
