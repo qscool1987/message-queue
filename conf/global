@@ -2,7 +2,7 @@
 port = 8813
 max_concurrency_thread = 20
 memory_limit = 0.8
-max_queue_len = 10000000
+max_queue_len = 10000
 messge_expire_time = 86400
 
 [log]
