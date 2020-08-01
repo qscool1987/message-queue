@@ -1,0 +1,21 @@
+[system]
+port = 8813
+max_concurrency_thread = 20
+memory_limit = 0.8
+max_queue_len = 10000000
+messge_expire_time = 86400
+
+[log]
+level = 1
+logpath = log/
+
+[user]
+name = cool
+passwd = qs1987
+
+[subscription]
+name = cool
+addr = 127.0.0.1:8300/test/receive
+
+
+
