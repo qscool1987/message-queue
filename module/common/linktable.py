@@ -19,9 +19,12 @@ class LinkTable():
 
 	def popBack(self):
 		if self._size > 0:
+			obj = self.tail.prev
 			self.tail.prev.prev.next = self.tail
 			self.tail.prev = self.tail.prev.prev
-			self._size += 1
+			self._size -= 1
+			return obj
+		return None
 
 	def removeNode(self, node):
 		node.prev.next = node.next
@@ -47,9 +50,12 @@ class LinkTable():
 
 	def popFront(self):
 		if self._size > 0:
+			obj = self.head.next
 			self.head.next.next.prev = self.head
 			self.head.next = self.head.next.next
-			self._size += 1
+			self._size -= 1
+			return obj
+		return None
 
 	def pushFront(self, data):
 		node = LinkNode(data)
