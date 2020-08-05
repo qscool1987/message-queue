@@ -1,14 +1,15 @@
 import sys
 import time
+import json
 
 class Message():
-	def __init__(self, owner, msgBody):
+	def __init__(self, owner="", msgBody=""):
 		self.msgNo = 0
 		self.msgBody = msgBody
 		self.expireTime = -1
 		self.owner = owner
 		self.publishTime = -1
-		self.subscriptionTime = 1
+		self.subscriptionTime = 0
 
 	def setMsgNo(self, msgNo):
 		self.msgNo = msgNo
@@ -27,6 +28,17 @@ class Message():
 
 	def setSubscriptionTime(self, subscriptionTime):
 		self.subscriptionTime = subscriptionTime
+
+	def buildMessage(self, data):
+		#msg = message.Message()
+		data = json.loads(data)
+		if 'owner' in data:
+			self.setOwner(data['owner'])
+		if 'msgBody' in data:
+			self.setMsgBody(data['msgBody'])
+		if 'publishTime' in data:
+			self.setPublishTime(data['publishTime'])
+		self.setExpireTime(int(time.time()) + 86400)
 
 	def droupout(self):
 		if self.subscriptionTime <= 0:

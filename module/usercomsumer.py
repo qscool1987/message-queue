@@ -8,15 +8,15 @@ class UserComsumer(threading.Thread):
 	def __init__(self):
 		super().__init__()
 		self.msgQueue = queue.Queue()
-		self.interval = 0.5
+		self.interval = 3 
 
 	def run(self):
 		while True:
 			if not self.msgQueue.empty():
-				print('comsume ' + str(self.pop().data.msgNo) + ' msg')
+				print('user comsumer ' + str(self.pop().data.msgNo) + ' msg')
 			else:
 				time.sleep(self.interval)
-				print("sleep !!!")
+				print("usercomsumer sleep !!!")
 			
 			
 	

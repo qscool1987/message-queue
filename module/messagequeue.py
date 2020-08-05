@@ -5,7 +5,11 @@ from multiprocessing import Process, Lock
 
 
 class MessageQueue():
+	_instance = None
 	def __init__(self):
+		pass
+
+	def __initQueue(self):
 		gConfig = configure.ConfigParser.getInstance()
 		self.capacity = gConfig.getInt('system', 'max_queue_len') 
 		self.queue = LinkTable()
@@ -27,14 +31,19 @@ class MessageQueue():
 	
 	def size(self):
 		return self.queue.size()
-
 	
+	@classmethod
+	def getInstance(cls):
+		if not cls._instance:
+			cls._instance = MessageQueue()
+			cls._instance.__initQueue()
+		return cls._instance
 	def toString(self):
 		self.queue.toString()
 
 
 if __name__ == '__main__':
-	obj = MessageQueue()
+	obj = MessageQueue.getInstance()
 	print (obj.capacity,obj.size(),obj.mutex)	
 	for i in range(0,10):
 		msg = Message('cool', i)
