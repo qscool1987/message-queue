@@ -3,57 +3,80 @@ import time
 import json
 
 class Message():
-	def __init__(self, owner="", msgBody=""):
-		self.msgNo = 0
-		self.msgBody = msgBody
-		self.expireTime = -1
-		self.owner = owner
-		self.publishTime = -1
-		self.subscriptionTime = 0
+    def __init__(self, owner="", msgBody=""):
+        self.msgNo = -1 
+        self.msgBody = msgBody
+        self.expireTime = -1
+        self.owner = owner
+        self.publishTime = -1
+        self.subscriptionTime = 0
 
-	def setMsgNo(self, msgNo):
-		self.msgNo = msgNo
+    def setMsgNo(self, msgNo):
+        self.msgNo = msgNo
 	
-	def setMsgBody(self, msgBody):
-		self.msgBody = msgBody
+    def setMsgBody(self, msgBody):
+        self.msgBody = msgBody
 
-	def setExpireTime(self, expireTime):
-		self.expireTime = expireTime
+    def setExpireTime(self, expireTime):
+        self.expireTime = expireTime
 	
-	def setOwner(self, owner):
-		self.owner = owner
+    def setOwner(self, owner):
+        self.owner = owner
 
-	def setPublishTime(self, publishTime):
-		self.publishTime = publishTime
+    def setPublishTime(self, publishTime):
+        self.publishTime = publishTime
 
-	def setSubscriptionTime(self, subscriptionTime):
-		self.subscriptionTime = subscriptionTime
+    def setSubscriptionTime(self, subscriptionTime):
+        self.subscriptionTime = subscriptionTime
 
-	def buildMessage(self, data):
-		#msg = message.Message()
-		data = json.loads(data)
-		if 'owner' in data:
-			self.setOwner(data['owner'])
-		if 'msgBody' in data:
-			self.setMsgBody(data['msgBody'])
-		if 'publishTime' in data:
-			self.setPublishTime(data['publishTime'])
-		self.setExpireTime(int(time.time()) + 86400)
+    def buildMessage(self, data):
+        data = json.loads(data)
+        if 'owner' in data:
+            self.setOwner(data['owner'])
+        if 'msgBody' in data:
+            self.setMsgBody(data['msgBody'])
+        if 'publishTime' in data:
+            self.setPublishTime(data['publishTime'])
+        if 'msgNo' in data:
+            self.setMsgNo(data['msgNo'])
+        if 'expireTime' in data:
+            self.setExpireTime(data['expireTime'])
+        else:
+            self.setExpireTime(int(time.time()) + 86400)
+        if 'subscriptionTime' in data:
+            self.setSubscriptionTime(data['subscriptionTime'])
 
-	def droupout(self):
-		if self.subscriptionTime <= 0:
-			return True
-		currTime = int(time.time())
-		if currTime >= self.expireTime:
-			return True
-		return False
+    def dumpMessage(self):
+        obj = {
+            'msgNo': self.msgNo,
+            'msgBody': self.msgBody,
+            'expireTime': self.expireTime,
+            'owner': self.owner,
+            'publishTime': self.publishTime,
+            'subscriptionTime': self.subscriptionTime
+        }
+        return json.dumps(obj)
+
+    def droupout(self):
+        if self.subscriptionTime <= 0:
+            return True
+        currTime = int(time.time())
+        if currTime >= self.expireTime:
+            return True
+        return False
 
 if __name__ == '__main__':
-	obj = Message('qscool', 'helloworld')
-	obj.setMsgNo(123324334)
-	obj.setMsgBody('welcome to my github')
-	obj.setExpireTime(int(time.time()))
-	obj.setPublishTime(int(time.time()) - 100)
-	obj.setSubscriptionTime(5)
-	print (obj.owner,obj.msgNo,obj.msgBody,obj.expireTime,obj.publishTime,obj.subscriptionTime,obj.droupout())	
-		
+    msg = Message()
+    obj = {
+        "msgNo": 100,
+        "msgBody": "xxxxyyysdfdf",
+        "expireTime": 123434345,
+        "owner": "qinshuai",
+        "publishTime": 12434555,
+        "subscriptionTime": 3
+    }
+    msgStr = json.dumps(obj)
+    msg.buildMessage(msgStr)
+    print(msg.msgNo,msg.msgBody,msg.expireTime,msg.owner,msg.publishTime,msg.subscriptionTime)
+    res = msg.dumpMessage()
+    print (res)

@@ -20,7 +20,7 @@ class push:
 		print (data)
 		msg = message.Message()
 		msg.buildMessage(data)
-		messagequeue.MessageQueue.getInstance().push(msg)
+		messagequeue.MessageQueue.getInstance().pushBack(msg)
 		return 'successful'
 
 class fetch:

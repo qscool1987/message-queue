@@ -19,7 +19,7 @@ class MessageDispatcher(threading.Thread):
 				print('dispatcher: no msg to dispatcher')	
 
 	def dispatcher(self):
-		obj = self.msgQueue.pop()
+		obj = self.msgQueue.popFront()
 		if obj is not None:
 			self.userManager.dispatcher(obj)
 			print('dispatch ' + str(obj.data.msgNo) + 'msg')
