@@ -9,7 +9,8 @@ class SysMonitor(threading.Thread):
 
     def __initMonitor(self):
         self.memFreeRate = None
-        self.memLimit = 0.4
+        self.memPersistLimit = 0.7
+        self.memDataLoadLimit = 0.9
         self.interval = 10
         self.mutex = threading.Lock()
         
@@ -18,7 +19,8 @@ class SysMonitor(threading.Thread):
         while True:
             self.__update()
             print(self.memFreeRate)
-            print(self.checkSysMemUse())
+            print(self.checkNeedPersistData())
+            print(self.checkNeedLoadData())
             time.sleep(self.interval)
             
     def __update(self):
@@ -38,9 +40,15 @@ class SysMonitor(threading.Thread):
                 meminfo[items[0].strip()] = items[1].strip()
         return meminfo
 
-    def checkSysMemUse(self):
+    def checkNeedPersistData(self):
         self.mutex.acquire()
-        memOk = (self.memFreeRate > self.memLimit)
+        memOk = (self.memFreeRate < self.memPersistLimit)
+        self.mutex.release()
+        return memOk
+
+    def checkNeedLoadData(self):
+        self.mutex.acquire()
+        memOk = (self.memFreeRate > self.memDataLoadLimit)
         self.mutex.release()
         return memOk
 
