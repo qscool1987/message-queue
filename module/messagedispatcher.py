@@ -21,13 +21,13 @@ class MessageDispatcher(threading.Thread):
                 print('dispatcher: no msg to dispatcher')	
 
     def dispatcher(self):
-        self.dispatchClose = sysmonitor.SysMonitor.getInstance().checkNeedLoadData()
+        self.dispatchClose = sysmonitor.SysMonitor.getInstance().checkNeedPersistData()
         if self.dispatchClose:
             return False
         obj = self.msgQueue.popFront()
         if obj is not None:
             self.userManager.dispatcher(obj)
-            print('dispatch ' + str(obj.data.msgNo) + 'msg')
+            print('dispatch ' + str(obj.msgNo) + 'msg')
             return True
         return False
 

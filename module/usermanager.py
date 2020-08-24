@@ -11,13 +11,12 @@ class UserManager():
 		self.userComsumers = dict()
 		self.msgTable = MessageTable()
 
-	def dispatcher(self, node):
-		name = node.data.owner
+	def dispatcher(self, msg):
+		name = msg.owner
 		if name not in self.userComsumers:
 			self.userComsumers[name] = UserComsumer()
 			self.userComsumers[name].start()
 		self.userComsumers[name].push(node)
-		self.msgTable.insert(node)
 	
 	def fetchMessage(self, msgNo):
 		return self.msgTable.fetch(msgNo)

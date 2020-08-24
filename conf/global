@@ -1,5 +1,5 @@
 [system]
-port = 8813
+port = 8088
 max_concurrency_thread = 20
 memory_data_load_limit = 0.9
 memory_persist_limit = 0.7

@@ -18,7 +18,7 @@ class MessageQueue():
 	
     def pushFront(self, msg):
         self.mutex.acquire()
-        if msg.msgNo > 0:
+        if msg.msgNo < 0:
             self.currentMsgNo += 1
             msg.msgNo = self.currentMsgNo
         node = self.queue.pushFront(msg)
@@ -28,11 +28,13 @@ class MessageQueue():
         self.mutex.acquire()
         msgObj = self.queue.popFront()
         self.mutex.release()
-        return msgObj
+        if msgObj is None:
+            return None
+        return msgObj.data
 	
     def pushBack(self, msg):
         self.mutex.acquire()
-        if msg.msgNo > 0:
+        if msg.msgNo < 0:
             self.currentMsgNo += 1
             msg.msgNo = self.currentMsgNo
         node = self.queue.pushBack(msg)
