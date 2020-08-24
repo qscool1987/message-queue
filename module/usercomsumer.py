@@ -13,15 +13,15 @@ class UserComsumer(threading.Thread):
 	def run(self):
 		while True:
 			if not self.msgQueue.empty():
-				print('user comsumer ' + str(self.pop().data.msgNo) + ' msg')
+				print('user comsumer ' + str(self.pop().msgNo) + ' msg')
 			else:
 				time.sleep(self.interval)
 				print("usercomsumer sleep !!!")
 			
 			
 	
-	def push(self, node):
-		self.msgQueue.put(node)
+	def push(self, msg):
+		self.msgQueue.put(msg)
 
 	def pop(self):
 		return self.msgQueue.get()

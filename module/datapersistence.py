@@ -39,15 +39,20 @@ class DataPersistence(threading.Thread):
         msg = self.messageQueue.popFront()
         if msg:
             msgStr = msg.dumpMessage() + "\n"
+            print(msgStr)
             fileNo = self.currentRecordNo / self.recordLimit
+            print('fileNo is %d' % fileNo)
             if self.fPersist is None:
                 fileName = self.dataDir + "/" + str(fileNo) + ".data"
+                print(fileName)
                 self.fPersist = open(fileName, 'a+')
             elif self.currentRecordNo % self.recordLimit == 0:
                 self.fPersist.close()
                 fileName = self.dataDir + "/" + str(fileNo) + ".data"
+                print(fileName)
                 self.fPersist = open(fileName, 'a+')
-            fwrite(fp, msgStr)
+            self.fPersist.write(msgStr)
+            self.fPersist.flush()
         else:
             time.sleep(self.interval)
 
