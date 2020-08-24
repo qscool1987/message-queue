@@ -1,7 +1,8 @@
 [system]
 port = 8813
 max_concurrency_thread = 20
-memory_limit = 0.8
+memory_data_load_limit = 0.9
+memory_persist_limit = 0.7
 max_queue_len = 10000
 messge_expire_time = 86400
 
@@ -17,5 +18,8 @@ passwd = qs1987
 name = cool
 addr = 127.0.0.1:8300/test/receive
 
+[persist]
+data_dir = ../data/
+record_limit = 100
 
 

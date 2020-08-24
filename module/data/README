@@ -1,0 +1,4 @@
+#persist
+one file can max contain 100 records
+#load
+when load data, load a file one time
