@@ -1,8 +1,10 @@
 import json
 import configure
+import sysmonitor
 import message
 import web
 import messagequeue
+import datapersistence
 import messagedispatcher
 
 urls = (
@@ -36,9 +38,12 @@ class WebService(web.application):
 
 
 if __name__ == '__main__':
-	gConfigure = configure.ConfigParser.getInstance()
-	port = gConfigure.getInt('system', 'port')
-	msgDispatcher = messagedispatcher.MessageDispatcher() 
-	msgDispatcher.start()
-	app = WebService(urls, globals())
-	app.run(port)
+    gConfigure = configure.ConfigParser.getInstance()
+    sysmonitor.SysMonitor.getInstance().start()
+    dataPersistence = datapersistence.DataPersistence()
+    dataPersistence.start()
+    port = gConfigure.getInt('system', 'port')
+    msgDispatcher = messagedispatcher.MessageDispatcher() 
+    msgDispatcher.start()
+    app = WebService(urls, globals())
+    app.run(port)
