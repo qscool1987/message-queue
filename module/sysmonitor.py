@@ -1,4 +1,5 @@
 import time
+import configure
 from collections import OrderedDict
 import threading
 
@@ -9,8 +10,8 @@ class SysMonitor(threading.Thread):
 
     def __initMonitor(self):
         self.memFreeRate = None
-        self.memPersistLimit = 0.7
-        self.memDataLoadLimit = 0.9
+        self.memPersistLimit = configure.ConfigParser.getInstance().getFloat("system", "memory_persist_limit")
+        self.memDataLoadLimit = configure.ConfigParser.getInstance().getFloat("system", "memory_data_load_limit")
         self.interval = 10
         self.mutex = threading.Lock()
         
