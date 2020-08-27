@@ -40,15 +40,15 @@ class DataPersistence(threading.Thread):
         if msg:
             msgStr = msg.dumpMessage() + "\n"
             print(msgStr)
-            fileNo = self.currentRecordNo / self.recordLimit
+            fileNo = int(self.currentRecordNo / self.recordLimit)
             print('fileNo is %d' % fileNo)
             if self.fPersist is None:
-                fileName = self.dataDir + "/" + str(fileNo) + ".data"
+                fileName = self.dataDir + str(fileNo) + ".data"
                 print(fileName)
                 self.fPersist = open(fileName, 'a+')
             elif self.currentRecordNo % self.recordLimit == 0:
                 self.fPersist.close()
-                fileName = self.dataDir + "/" + str(fileNo) + ".data"
+                fileName = self.dataDir + str(fileNo) + ".data"
                 print(fileName)
                 self.fPersist = open(fileName, 'a+')
             self.fPersist.write(msgStr)
@@ -59,6 +59,7 @@ class DataPersistence(threading.Thread):
     def loadData(self):
         print("load data")
         fileName = self.dataDir + "/" + str(self.fileLoadNo) + ".data"
+        print(fileName)
         if os.path.exists(fileName):
             with open(fileName) as fLoad:
                 for line in fLoad:
@@ -66,6 +67,7 @@ class DataPersistence(threading.Thread):
                     msg = message.Message()
                     msg.buildMessage(msgStr)
                     self.messageQueue.pushBack(msg)
+            self.fileLoadNo += 1
 
         else:
             time.sleep(self.interval)
