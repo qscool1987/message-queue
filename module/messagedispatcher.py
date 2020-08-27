@@ -13,6 +13,7 @@ class MessageDispatcher(threading.Thread):
         self.userManager = UserManager()
         self.interval = 3
         self.dispatchClose = False
+        self.publishInfo = dict()
 
     def run(self):
         while True:
@@ -26,10 +27,16 @@ class MessageDispatcher(threading.Thread):
             return False
         obj = self.msgQueue.popFront()
         if obj is not None:
+            if obj.owner not in self.publishInfo:
+                self.publishInfo[obj.owner] = 0
+            self.publishInfo[obj.owner] += 1
             self.userManager.dispatcher(obj)
             print('dispatch ' + str(obj.msgNo) + 'msg')
             return True
         return False
+
+    def getPublishInfo(self):
+        return self.publishInfo
 
 
 if __name__ == '__main__':

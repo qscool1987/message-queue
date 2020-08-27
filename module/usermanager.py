@@ -7,19 +7,22 @@ from usercomsumer import UserComsumer
 from messagetable import MessageTable
 
 class UserManager():
-	def __init__(self):
-		self.userComsumers = dict()
-		self.msgTable = MessageTable()
+    def __init__(self):
+        self.userComsumers = dict()
+        self.msgTable = MessageTable()
 
-	def dispatcher(self, msg):
-		name = msg.owner
-		if name not in self.userComsumers:
-			self.userComsumers[name] = UserComsumer()
-			self.userComsumers[name].start()
-		self.userComsumers[name].push(node)
+    def dispatcher(self, msg):
+        name = msg.owner
+        if name not in self.userComsumers:
+            self.userComsumers[name] = UserComsumer()
+            self.userComsumers[name].setUser(name)
+            self.userComsumers[name].start()
+        self.userComsumers[name].push(msg)
 	
-	def fetchMessage(self, msgNo):
-		return self.msgTable.fetch(msgNo)
+    def fetchMessage(self, msgNo):
+        return self.msgTable.fetch(msgNo)
+
+        
 
 
 
@@ -35,7 +38,7 @@ if __name__ == '__main__':
 	userManager = UserManager()
 	while obj.size() > 0:
 		node = obj.popFront()
-		userManager.dispatcher(node)
+		userManager.dispatcher(node.data)
 	while True:
 		time.sleep(1000)
 	

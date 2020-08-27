@@ -39,11 +39,13 @@ class WebService(web.application):
 
 if __name__ == '__main__':
     gConfigure = configure.ConfigParser.getInstance()
-    sysmonitor.SysMonitor.getInstance().start()
-    dataPersistence = datapersistence.DataPersistence()
-    dataPersistence.start()
+    gConfigure.start()
     port = gConfigure.getInt('system', 'port')
     msgDispatcher = messagedispatcher.MessageDispatcher() 
     msgDispatcher.start()
+    sysmonitor.SysMonitor.getInstance().start()
+    sysmonitor.SysMonitor.getInstance().setMessageDispatcher(msgDispatcher)
+    dataPersistence = datapersistence.DataPersistence()
+    dataPersistence.start()
     app = WebService(urls, globals())
     app.run(port)
