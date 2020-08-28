@@ -5,7 +5,6 @@ import time
 import threading
 import json
 
-
 class ConfigParser(threading.Thread):
     _instance = None
 
@@ -65,7 +64,7 @@ class ConfigParser(threading.Thread):
 
 
 if __name__ == '__main__':
-    obj = ConfigParser.getInstance()
-    obj.start()
-		
+    #obj = ConfigParser.getInstance()
+    #obj.start()
+    glog.warning('test log')
 

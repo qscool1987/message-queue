@@ -7,7 +7,7 @@ max_queue_len = 10000
 messge_expire_time = 86400
 
 [log]
-level = 1
+level = 30
 logpath = log/
 
 [user]
