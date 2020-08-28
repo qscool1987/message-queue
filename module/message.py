@@ -1,6 +1,7 @@
 import sys
 import time
 import json
+from loghandle import glog
 
 class Message():
     def __init__(self, owner="", msgBody=""):
@@ -66,7 +67,7 @@ class Message():
         return False
 
 if __name__ == '__main__':
-    msg = Message()
+    '''msg = Message()
     obj = {
         "msgNo": 100,
         "msgBody": "xxxxyyysdfdf",
@@ -80,3 +81,5 @@ if __name__ == '__main__':
     print(msg.msgNo,msg.msgBody,msg.expireTime,msg.owner,msg.publishTime,msg.subscriptionTime)
     res = msg.dumpMessage()
     print (res)
+    '''
+    glog.warning("message py")
