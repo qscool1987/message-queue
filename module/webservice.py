@@ -6,6 +6,8 @@ import web
 import messagequeue
 import datapersistence
 import messagedispatcher
+import messageerror
+from loghandle import glog
 
 urls = (
 	'/push', 'push',
@@ -13,28 +15,36 @@ urls = (
 )
 
 class push:
-	def GET(self):
-		print (web.input())
-		return 'hello, world'
+    def GET(self):
+        print (web.input())
+        return 'hello, world'
 
-	def POST(self):
-		data = web.data()
-		print (data)
-		msg = message.Message()
-		msg.buildMessage(data)
-		messagequeue.MessageQueue.getInstance().pushBack(msg)
-		return 'successful'
+    def POST(self):
+        data = web.data()
+        info = dict()
+        info['userIp'] = web.ctx.ip
+        msg = message.Message()
+        errcode = msg.buildMessage(data)
+        info['errcode'] = errcode
+        info['errMsg'] = messageerror.errorDict[errcode]
+        if errcode == messageerror.MSG_OK:
+            node = messagequeue.MessageQueue.getInstance().pushBack(msg)
+            info['msgNo'] = node.data.msgNo
+            info['owner'] = node.data.owner
+        info = json.dumps(info)
+        glog.info(info)
+        return info
 
 class fetch:
-	def GET(self):
-		print (web.input())
-		return 'xxx'
+    def GET(self):
+        print (web.input())
+        return 'xxx'
 
 
 class WebService(web.application):
-	def run(self, port = 8080, *middleware):
-		func = self.wsgifunc(*middleware)
-		return web.httpserver.runsimple(func, ('0.0.0.0', port))
+    def run(self, port = 8080, *middleware):
+        func = self.wsgifunc(*middleware)
+        return web.httpserver.runsimple(func, ('0.0.0.0', port))
 
 
 if __name__ == '__main__':

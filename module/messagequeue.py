@@ -39,6 +39,7 @@ class MessageQueue():
             msg.msgNo = self.currentMsgNo
         node = self.queue.pushBack(msg)
         self.mutex.release()
+        return node
 	
     def size(self):
         return self.queue.size()

@@ -1,5 +1,5 @@
 [system]
-port = 8008
+port = 8088
 max_concurrency_thread = 20
 memory_data_load_limit = 0.08
 memory_persist_limit = 0.03
@@ -7,7 +7,7 @@ max_queue_len = 10000
 messge_expire_time = 86400
 
 [log]
-level = 30
+level = 20
 logpath = log/
 
 [user]
