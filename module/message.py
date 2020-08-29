@@ -1,6 +1,7 @@
 import sys
 import time
 import json
+import messageerror
 from loghandle import glog
 
 class Message():
@@ -31,11 +32,16 @@ class Message():
         self.subscriptionTime = subscriptionTime
 
     def buildMessage(self, data):
-        data = json.loads(data)
-        if 'owner' in data:
-            self.setOwner(data['owner'])
-        if 'msgBody' in data:
-            self.setMsgBody(data['msgBody'])
+        try:
+            data = json.loads(data)
+        except:
+            return messageerror.MSG_NOT_JSON
+        if 'owner' not in data:
+            return messageerror.MSG_NO_OWNER
+        if 'msgBody' not in data or data['msgBody'] == "":
+            return messageerror.MSG_BODY_ERR
+        self.setOwner(data['owner'])
+        self.setMsgBody(data['msgBody'])
         if 'publishTime' in data:
             self.setPublishTime(data['publishTime'])
         if 'msgNo' in data:
@@ -46,6 +52,7 @@ class Message():
             self.setExpireTime(int(time.time()) + 86400)
         if 'subscriptionTime' in data:
             self.setSubscriptionTime(data['subscriptionTime'])
+        return messageerror.MSG_OK
 
     def dumpMessage(self):
         obj = {
@@ -67,19 +74,7 @@ class Message():
         return False
 
 if __name__ == '__main__':
-    '''msg = Message()
-    obj = {
-        "msgNo": 100,
-        "msgBody": "xxxxyyysdfdf",
-        "expireTime": 123434345,
-        "owner": "qinshuai",
-        "publishTime": 12434555,
-        "subscriptionTime": 3
-    }
-    msgStr = json.dumps(obj)
-    msg.buildMessage(msgStr)
-    print(msg.msgNo,msg.msgBody,msg.expireTime,msg.owner,msg.publishTime,msg.subscriptionTime)
-    res = msg.dumpMessage()
-    print (res)
-    '''
-    glog.warning("message py")
+    data = {'owner':'cool', 'msgBody': 'helloworld'}
+    data = json.dumps(data)
+    obj = Message()
+    print(obj.buildMessage(data))

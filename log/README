@@ -1,0 +1,4 @@
+#record each request status
+#record each error info
+#How To Use
+#error info is a json string, if errcode=0 means ok, otherwise some error occured
