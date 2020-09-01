@@ -11,7 +11,6 @@ class MessageTable():
 	def insert(self, node):
 		self.mutex.acquire()
 		self.msgTable[node.data.msgNo] = node
-		print('messagetable insert ' + str(node.data.msgNo) + ' msg')
 		self.mutex.release()
 
 	def pop(self, node):

@@ -19,10 +19,7 @@ class ConfigParser(threading.Thread):
 
     def run(self):
         while True:
-            self.__initConf(setting.confDir + setting.confFile)
-            print("init conf")
-            port = self.getInt('system', 'port')
-            print(port)
+            self.__initConf(setting.GLOBAL_CONF_PATH + "/" + setting.confFile)
             time.sleep(self.interval)
 
     def getSector(self, sector):
@@ -57,7 +54,7 @@ class ConfigParser(threading.Thread):
     def getInstance(cls):
         if not cls._instance:
             cls._instance = ConfigParser()
-            cls._instance.__initConf(setting.confDir + setting.confFile)
+            cls._instance.__initConf(setting.GLOBAL_CONF_PATH + "/" + setting.confFile)
         return cls._instance
 		
 		

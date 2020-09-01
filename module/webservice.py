@@ -16,10 +16,15 @@ urls = (
 
 class push:
     def GET(self):
-        print (web.input())
+        #print (web.input())
         return 'hello, world'
 
     def POST(self):
+        params = web.input()
+        #check user auth
+        user = params['user']
+        sysmonitor.SysMonitor.getInstance().addUserRealRequestNumber(user)
+
         data = web.data()
         info = dict()
         info['userIp'] = web.ctx.ip
@@ -31,6 +36,7 @@ class push:
             node = messagequeue.MessageQueue.getInstance().pushBack(msg)
             info['msgNo'] = node.data.msgNo
             info['owner'] = node.data.owner
+            sysmonitor.SysMonitor.getInstance().addUserMsgOkNumber(user)
         info = json.dumps(info)
         glog.info(info)
         return info

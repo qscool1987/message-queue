@@ -8,7 +8,6 @@ messge_expire_time = 86400
 
 [log]
 level = 20
-logpath = log/
 
 [user]
 name = cool
@@ -19,7 +18,6 @@ name = cool
 addr = 127.0.0.1:8300/test/receive
 
 [persist]
-data_dir = ../data/
 record_limit = 100
 
 

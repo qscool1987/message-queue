@@ -17,10 +17,9 @@ class UserComsumer(threading.Thread):
     def run(self):
         while True:
             if not self.msgQueue.empty():
-                print('user comsumer ' + str(self.pop().msgNo) + ' msg')
+                self.pop()
             else:
                 time.sleep(self.interval)
-                print("usercomsumer sleep !!!")
             self.setConsumerInfo()
 				
 	
