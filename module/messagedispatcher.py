@@ -19,7 +19,6 @@ class MessageDispatcher(threading.Thread):
         while True:
             if not self.dispatcher():
                 time.sleep(self.interval)	
-                print('dispatcher: no msg to dispatcher')	
 
     def dispatcher(self):
         self.dispatchClose = sysmonitor.SysMonitor.getInstance().checkNeedPersistData()
@@ -28,10 +27,11 @@ class MessageDispatcher(threading.Thread):
         obj = self.msgQueue.popFront()
         if obj is not None:
             if obj.owner not in self.publishInfo:
-                self.publishInfo[obj.owner] = 0
-            self.publishInfo[obj.owner] += 1
+                self.publishInfo[obj.owner] = dict()
+                self.publishInfo[obj.owner]['dispatchTotal'] = 0
+            self.publishInfo[obj.owner]['dispatchTotal'] += 1
+            self.publishInfo[obj.owner]['maxMsgNo'] = obj.msgNo
             self.userManager.dispatcher(obj)
-            print('dispatch ' + str(obj.msgNo) + 'msg')
             return True
         return False
 

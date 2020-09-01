@@ -2,7 +2,6 @@ import sys
 import time
 import json
 import messageerror
-from loghandle import glog
 
 class Message():
     def __init__(self, owner="", msgBody=""):

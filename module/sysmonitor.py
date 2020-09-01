@@ -3,6 +3,8 @@ import configure
 from collections import OrderedDict
 import threading
 import json
+import copy
+from loghandle import glog
 
 class SysMonitor(threading.Thread):
     _instance = None
@@ -15,25 +17,48 @@ class SysMonitor(threading.Thread):
         self.memDataLoadLimit = 0.8
         self.interval = 10
         self.mutex = threading.Lock()
-        self.publishInfo = dict()
+        self.dispatchInfo = dict()
         self.sysInfo = dict()
         self.receiveInfo = dict()
         self.globalInfo = dict()
+        self.publishInfo = dict()
+        self.oldInfo = dict()
         
 
     def run(self):
         while True:
             self.__updateAll()
-            print(self.memFreeRate)
-            print(json.dumps(self.publishInfo))
-            print(json.dumps(self.receiveInfo))
-            print(json.dumps(self.globalInfo))
             time.sleep(self.interval)
 
+    def __calUserQps(self):
+        for user in self.publishInfo:
+            old = 0
+            if user in self.oldInfo:
+                old = self.oldInfo[user]['msgRealNum']
+            self.publishInfo[user]['qps'] = "%.1f" % (float(self.publishInfo[user]['msgRealNum'] - old) / self.interval)
+        
+        self.oldInfo = copy.deepcopy(self.publishInfo)
+
     def __updateAll(self):
+        self.mutex.acquire()
+        self.__calUserQps()
         self.__updateMemInfo()
         self.__updateGlobalConf()
-        self.__updatePublishInfo()
+        self.__updateDispatchInfo()
+        ginfo = {
+                "publishInfo" : self.publishInfo,
+                "dispatchInfo" : self.dispatchInfo,
+                "receiveInfo" : self.receiveInfo,
+                "globalInfo": self.globalInfo,
+                "memFreeRate": self.memFreeRate,
+                "memPersistLimit" : self.memPersistLimit,
+                "memDataLoadLimit" : self.memDataLoadLimit,
+                "isPersist" : self.checkNeedPersistData(),
+                "isLoaddata" : self.checkNeedLoadData(),
+                }
+        ginfo = json.dumps(ginfo)
+        glog.info(ginfo)
+        self.mutex.release()
             
     def __updateMemInfo(self):
         self.memPersistLimit = configure.ConfigParser.getInstance().getFloat("system", "memory_persist_limit")
@@ -41,10 +66,7 @@ class SysMonitor(threading.Thread):
         memoryInfo = self.__memInfo()
         memTotal = memoryInfo['MemTotal'].split(' ')[0].strip()
         memFree = memoryInfo['MemFree'].split(' ')[0].strip()
-        self.mutex.acquire()
         self.memFreeRate = float("%.2f" % (float(memFree) / float(memTotal)))
-        self.mutex.release()
-        
 
     def __memInfo(self):
         meminfo = OrderedDict()    
@@ -55,15 +77,11 @@ class SysMonitor(threading.Thread):
         return meminfo
 
     def checkNeedPersistData(self):
-        self.mutex.acquire()
         memOk = (self.memFreeRate < self.memPersistLimit)
-        self.mutex.release()
         return memOk
 
     def checkNeedLoadData(self):
-        self.mutex.acquire()
         memOk = (self.memFreeRate > self.memDataLoadLimit)
-        self.mutex.release()
         return memOk
     
     def setMessageDispatcher(self, dispatcher):
@@ -77,8 +95,26 @@ class SysMonitor(threading.Thread):
     def __updateGlobalConf(self):
         self.globalInfo = configure.ConfigParser.getInstance().getGlobalInfo()
 
-    def __updatePublishInfo(self):
-        self.publishInfo = self.messageDispatcher.getPublishInfo()
+    def __updateDispatchInfo(self):
+        self.dispatchInfo = self.messageDispatcher.getPublishInfo()
+
+    def addUserRealRequestNumber(self, user):
+        self.mutex.acquire()
+        if user not in self.publishInfo:
+            self.publishInfo[user] = dict()
+            self.publishInfo[user]['msgRealNum'] = 0
+            self.publishInfo[user]['msgOkNum'] = 0
+        self.publishInfo[user]['msgRealNum'] += 1
+        self.mutex.release()
+
+    def addUserMsgOkNumber(self, user):
+        self.mutex.acquire()
+        if user not in self.publishInfo:
+            self.publishInfo[user] = dict()
+            self.publishInfo[user]['msgRealNum'] = 0
+            self.publishInfo[user]['msgOkNum'] = 0
+        self.publishInfo[user]['msgOkNum'] += 1
+        self.mutex.release()
 
     def getSysAllInfo(self):
         pass
